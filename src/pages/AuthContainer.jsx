@@ -42,8 +42,8 @@ export default function AuthContainer() {
             <motion.img
               src={
                 isRegister
-                  ? "./images/ico/logo_bingbong.ico"
-                  : "./images/ico/logo_bingbong.ico"
+                  ? "./ico/logo_bingbong.ico"
+                  : "./ico/logo_bingbong.ico"
               }
               alt="BingBong Logo"
               style={{ width: "200px", height: "200px", objectFit: "contain" }}

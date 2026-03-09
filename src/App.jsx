@@ -4,10 +4,34 @@ import * as Pages from "./pages";
 import { ProtectedRoute, AuthRoute } from "./middlewares/auth";
 import useAuthStore from "./store/authStore";
 import { useEffect } from "react";
+import MainLayout from "./components/MainLayout";
+import { Suspense } from "react";
+import SpinnerLoading from "./components/SpinnerLoading";
+
+const LazyPage = ({ Element, Layout = MainLayout }) => (
+  <Suspense fallback={<SpinnerLoading />}>
+    <Layout Element={Element} />
+  </Suspense>
+);
+
+const LazyComponent = ({ Component }) => (
+  <Suspense fallback={<SpinnerLoading />}>
+    <Component />
+  </Suspense>
+);
 
 function App() {
-  const { checkAuth, theme, isCheckingAuth } = useAuthStore();
-  
+  const { checkAuth, theme } = useAuthStore();
+
+  useEffect(() => {
+    if (!theme) return;
+    if (theme === "dark") {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }, [theme]);
+
   useEffect(() => {
     checkAuth();
   }, [checkAuth]);
@@ -19,7 +43,7 @@ function App() {
           path="/"
           element={
             <ProtectedRoute>
-              <Pages.HomePage />
+              <LazyPage Element={Pages.HomePage} />
             </ProtectedRoute>
           }
         />
@@ -27,7 +51,7 @@ function App() {
           path="/login"
           element={
             <AuthRoute>
-              <Pages.AuthContainer />
+              <LazyComponent Component={Pages.AuthContainer} />
             </AuthRoute>
           }
         />
@@ -35,12 +59,26 @@ function App() {
           path="/register"
           element={
             <AuthRoute>
-              <Pages.AuthContainer />
+              <LazyComponent Component={Pages.AuthContainer} />
             </AuthRoute>
           }
         />
-        <Route path="/verify-email" element={<Pages.VerifyEmailPage />} />
-        <Route path="*" element={<Pages.NotFoundPage />} />
+        <Route
+          path="/verify-email"
+          element={
+            <AuthRoute>
+              <LazyComponent Component={Pages.VerifyEmailPage} />
+            </AuthRoute>
+          }
+        />
+        <Route
+          path="*"
+          element={
+            <ProtectedRoute>
+              <LazyPage Component={Pages.NotFoundPage} />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
       <Toaster
         position="top-right"
