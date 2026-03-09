@@ -97,7 +97,7 @@ const useAuthStore = create(
         try {
           const response = await authApi.checkAuth(token);
           set({
-            user: response,
+            user: response.data,
             isAuthenticated: true,
             isCheckingAuth: false,
           });
