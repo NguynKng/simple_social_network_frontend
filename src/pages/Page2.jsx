@@ -2,33 +2,33 @@ export default function Page2() {
   const images = [
     {
       id: 1,
-      url: "https://i.pinimg.com/originals/3e/61/bb/3e61bb707c62c337239800e9c9398666.jpg",
-      title: "Jesus Christ",
-      description: "Sacred Heart of Jesus",
+      url: "https://images.unsplash.com/photo-1574158622682-e40e69881006",
+      title: "Cute Cat",
+      description: "Adorable feline friend",
     },
     {
       id: 2,
-      url: "https://i.pinimg.com/736x/89/13/16/8913168604ab1ee9a86ce43ef2b8c2e3.jpg",
-      title: "The Good Shepherd",
-      description: "Jesus the shepherd",
+      url: "https://images.unsplash.com/photo-1583511655857-d19b40a7a54e",
+      title: "Golden Dog",
+      description: "Loyal companion",
     },
     {
       id: 3,
-      url: "https://www.seekpng.com/png/full/316-3164943_jesus-christ-png-image-jesus-christ-images-png.png",
-      title: "Christ the King",
-      description: "King of Kings",
+      url: "https://images.unsplash.com/photo-1551244072-5d12893278ab",
+      title: "Wild Elephant",
+      description: "Majestic giant",
     },
     {
       id: 4,
-      url: "https://i.pinimg.com/originals/c5/4e/8d/c54e8d6f5e4e5e5e5e5e5e5e5e5e5e5e5e.jpg",
-      title: "Divine Mercy",
-      description: "Jesus I trust in you",
+      url: "https://images.unsplash.com/photo-1437622368342-7a3d73a34c8f",
+      title: "Colorful Bird",
+      description: "Beautiful parrot",
     },
     {
       id: 5,
-      url: "https://cdn.pixabay.com/photo/2016/11/29/02/05/jesus-1867098_960_720.jpg",
-      title: "Risen Christ",
-      description: "Resurrection glory",
+      url: "https://images.unsplash.com/photo-1535268647677-300dbf3d78d1",
+      title: "Cute Rabbit",
+      description: "Fluffy bunny",
     },
   ];
 
