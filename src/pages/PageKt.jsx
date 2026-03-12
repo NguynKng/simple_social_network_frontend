@@ -1,3 +1,5 @@
+import "./style_pagekt.css"
+
 export default function PageKt() {
   return (
     <>
