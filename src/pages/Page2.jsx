@@ -2,34 +2,35 @@ export default function Page2() {
   const images = [
   {
     id: 1,
-    url: "https://images.unsplash.com/photo-1579952363873-27f3bade9f55",
-    title: "Lionel Messi",
-    description: "Huyền thoại bóng đá thế giới"
+    url: "https://images.unsplash.com/photo-1536440136628-849c177e76a1",
+    title: "Tom Cruise",
+    description: "Ngôi sao hành động huyền thoại"
   },
   {
     id: 2,
-    url: "https://images.unsplash.com/photo-1614632537423-1e6f2e079484",
-    title: "Cristiano Ronaldo",
-    description: "Siêu sao của những siêu sao"
+    url: "https://images.unsplash.com/photo-1517841905240-472988babdf9",
+    title: "Scarlett Johansson",
+    description: "Nữ diễn viên tài năng và quyến rũ"
   },
   {
     id: 3,
-    url: "https://images.unsplash.com/photo-1606925797300-0b35e9d1794e",
-    title: "Kỹ Thuật Cá Nhân",
-    description: "Màn trình diễn kỹ thuật điêu luyện"
+    url: "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce",
+    title: "Robert Downey Jr.",
+    description: "Iron Man của Marvel Universe"
   },
   {
     id: 4,
-    url: "https://images.unsplash.com/photo-1574629810360-7efbbe195018",
-    title: "Cầu Thủ Trẻ",
-    description: "Tài năng trẻ triển vọng"
+    url: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d",
+    title: "Chris Hemsworth",
+    description: "Thần sấm Thor của Hollywood"
   },
   {
     id: 5,
-    url: "https://images.unsplash.com/photo-1511886929837-354d827aae26",
-    title: "Đội Hình Xuất Sắc",
-    description: "Những cầu thủ hàng đầu"
+    url: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d",
+    title: "Leonardo DiCaprio",
+    description: "Diễn viên tài năng đoạt giải Oscar"
   }
+
 ];
 
   return (
