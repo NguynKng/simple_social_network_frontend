@@ -52,7 +52,7 @@ export default function Page2() {
             <div
               key={image.id}
               className={`group relative overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 ${
-                index === 4 ? 'md:col-span-2 lg:col-span-1' : ''
+                index === 4 ? "md:col-span-2 lg:col-span-1" : ""
               }`}
             >
               <img
@@ -76,9 +76,9 @@ export default function Page2() {
             Về Bộ Sưu Tập
           </h2>
           <p className="text-gray-600 text-lg leading-relaxed">
-            Đây là một trang gallery hiển thị 5 hình ảnh đẹp với hiệu ứng hover động. 
-            Di chuột qua mỗi hình để xem chi tiết thông tin. Bạn có thể thay thế các 
-            URL hình ảnh bằng hình ảnh của riêng bạn.
+            Đây là một trang gallery hiển thị 5 hình ảnh đẹp với hiệu ứng hover
+            động. Di chuột qua mỗi hình để xem chi tiết thông tin. Bạn có thể
+            thay thế các URL hình ảnh bằng hình ảnh của riêng bạn.
           </p>
         </div>
       </div>
