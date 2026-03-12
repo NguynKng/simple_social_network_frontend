@@ -1,23 +1,7 @@
 export default function Page2() {
   const images = [
-    {
-      id: 1,
-      url: "https://images.unsplash.com/photo-1579952363873-27f3bade9f55",
-      title: "Cristiano Ronaldo",
-      description: "Siêu sao bóng đá huyền thoại",
-    },
-    {
-      id: 2,
-      url: "https://images.unsplash.com/photo-1560272564-c83b66b1ad12",
-      title: "Lionel Messi",
-      description: "Phù thủy với trái bóng",
-    },
-    {
-      id: 3,
-      url: "https://images.unsplash.com/photo-1522778119026-d647f0596c20",
-      title: "Neymar Jr.",
-      description: "Ngôi sao Brazil tài năng",
-    },
+    
+    
     {
       id: 4,
       url: "https://images.unsplash.com/photo-1606925797300-0b35e9d1794e",
