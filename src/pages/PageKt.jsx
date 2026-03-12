@@ -8,14 +8,14 @@ export default function PageKt() {
         <div id="logoPan">
           {" "}
           <img
-            src="images/logo.gif"
+            src="/img/logo.gif"
             width="192"
             height="92"
             alt=""
             id="logo"
           />{" "}
           <img
-            src="images/slogan.gif"
+            src="/img/slogan.gif"
             width="297"
             height="46"
             alt=""
@@ -48,7 +48,7 @@ export default function PageKt() {
         <div id="header">
           {" "}
           <img
-            src="images/slogan2.gif"
+            src="/img/slogan2.gif"
             width="192"
             height="70"
             alt=""
@@ -60,7 +60,7 @@ export default function PageKt() {
             <div id="welcome">
               <h2></h2>
               <img
-                src="images/img_welcome.jpg"
+                src="/img/img_welcome.jpg"
                 width="172"
                 height="56"
                 alt=""
@@ -87,7 +87,7 @@ export default function PageKt() {
               <div class="featItem" id="i01">
                 {" "}
                 <img
-                  src="images/img_prod.jpg"
+                  src="/img/img_prod.jpg"
                   width="116"
                   height="125"
                   alt=""
@@ -103,7 +103,7 @@ export default function PageKt() {
               <div class="featItem" id="i02">
                 {" "}
                 <img
-                  src="images/img_prod-13.jpg"
+                  src="/img/img_prod-13.jpg"
                   width="116"
                   height="125"
                   alt=""
@@ -119,7 +119,7 @@ export default function PageKt() {
               <div class="featItem" id="i03">
                 {" "}
                 <img
-                  src="images/img_prod-14.jpg"
+                  src="/img/img_prod-14.jpg"
                   width="116"
                   height="125"
                   alt=""
