@@ -1,36 +1,36 @@
 export default function Page2() {
   const images = [
-    {
-      id: 1,
-      url: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4",
-      title: "Mountain Landscape",
-      description: "Beautiful mountain scenery"
-    },
-    {
-      id: 2,
-      url: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e",
-      title: "Beach Paradise",
-      description: "Tropical beach view"
-    },
-    {
-      id: 3,
-      url: "https://images.unsplash.com/photo-1511593358241-7eea1f3c84e5",
-      title: "City Lights",
-      description: "Urban night photography"
-    },
-    {
-      id: 4,
-      url: "https://images.unsplash.com/photo-1469474968028-56623f02e42e",
-      title: "Forest Path",
-      description: "Nature trail adventure"
-    },
-    {
-      id: 5,
-      url: "https://images.unsplash.com/photo-1501785888041-af3ef285b470",
-      title: "Desert Sunset",
-      description: "Golden hour in the desert"
-    }
-  ];
+  {
+    id: 1,
+    url: "https://images.unsplash.com/photo-1579952363873-27f3bade9f55",
+    title: "Lionel Messi",
+    description: "Huyền thoại bóng đá thế giới"
+  },
+  {
+    id: 2,
+    url: "https://images.unsplash.com/photo-1614632537423-1e6f2e079484",
+    title: "Cristiano Ronaldo",
+    description: "Siêu sao của những siêu sao"
+  },
+  {
+    id: 3,
+    url: "https://images.unsplash.com/photo-1606925797300-0b35e9d1794e",
+    title: "Kỹ Thuật Cá Nhân",
+    description: "Màn trình diễn kỹ thuật điêu luyện"
+  },
+  {
+    id: 4,
+    url: "https://images.unsplash.com/photo-1574629810360-7efbbe195018",
+    title: "Cầu Thủ Trẻ",
+    description: "Tài năng trẻ triển vọng"
+  },
+  {
+    id: 5,
+    url: "https://images.unsplash.com/photo-1511886929837-354d827aae26",
+    title: "Đội Hình Xuất Sắc",
+    description: "Những cầu thủ hàng đầu"
+  }
+];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 p-8">
