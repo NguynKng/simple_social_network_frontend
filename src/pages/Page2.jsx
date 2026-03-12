@@ -1,36 +1,37 @@
 export default function Page2() {
   const images = [
-    {
-      id: 1,
-      url: "https://images.unsplash.com/photo-1574158622682-e40e69881006",
-      title: "Cute Cat",
-      description: "Adorable feline friend",
-    },
-    {
-      id: 2,
-      url: "https://images.unsplash.com/photo-1583511655857-d19b40a7a54e",
-      title: "Golden Dog",
-      description: "Loyal companion",
-    },
-    {
-      id: 3,
-      url: "https://images.unsplash.com/photo-1551244072-5d12893278ab",
-      title: "Wild Elephant",
-      description: "Majestic giant",
-    },
-    {
-      id: 4,
-      url: "https://images.unsplash.com/photo-1437622368342-7a3d73a34c8f",
-      title: "Colorful Bird",
-      description: "Beautiful parrot",
-    },
-    {
-      id: 5,
-      url: "https://images.unsplash.com/photo-1535268647677-300dbf3d78d1",
-      title: "Cute Rabbit",
-      description: "Fluffy bunny",
-    },
-  ];
+  {
+    id: 1,
+    url: "https://images.unsplash.com/photo-1536440136628-849c177e76a1",
+    title: "Tom Cruise",
+    description: "Ngôi sao hành động huyền thoại"
+  },
+  {
+    id: 2,
+    url: "https://images.unsplash.com/photo-1517841905240-472988babdf9",
+    title: "Scarlett Johansson",
+    description: "Nữ diễn viên tài năng và quyến rũ"
+  },
+  {
+    id: 3,
+    url: "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce",
+    title: "Robert Downey Jr.",
+    description: "Iron Man của Marvel Universe"
+  },
+  {
+    id: 4,
+    url: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d",
+    title: "Chris Hemsworth",
+    description: "Thần sấm Thor của Hollywood"
+  },
+  {
+    id: 5,
+    url: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d",
+    title: "Leonardo DiCaprio",
+    description: "Diễn viên tài năng đoạt giải Oscar"
+  }
+
+];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 p-8">
