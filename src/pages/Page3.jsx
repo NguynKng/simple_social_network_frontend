@@ -4,31 +4,31 @@ export default function Page2() {
     id: 1,
     url: "https://images.unsplash.com/photo-1536440136628-849c177e76a1",
     title: "Tom Cruise",
-    description: "Ngôi sao hành động"
+    description: "Ngôi sao"
   },
   {
     id: 2,
     url: "https://images.unsplash.com/photo-1517841905240-472988babdf9",
     title: "Scarlett Johansson",
-    description: "Nữ diễn viên tài năng"
+    description: "Nữ diễn viên"
   },
   {
     id: 3,
     url: "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce",
     title: "Robert Downey Jr.",
-    description: "Iron Man của Marvel"
+    description: "Iron Man"
   },
   {
     id: 4,
     url: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d",
     title: "Chris Hemsworth",
-    description: "Thần sấm Thor của"
+    description: "Thần sấm"
   },
   {
     id: 5,
     url: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d",
     title: "Leonardo DiCaprio",
-    description: "Diễn viên tài năng đoạt giải"
+    description: "Diễn viên"
   }
 
 ];
