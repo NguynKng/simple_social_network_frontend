@@ -17,8 +17,7 @@ export default function Page2() {
       url: "https://images.unsplash.com/photo-1522778119026-d647f0596c20",
       title: "Neymar Jr.",
       description: "Ngôi sao Brazil tài năng",
-    
-    
+    },
     {
       id: 4,
       url: "https://images.unsplash.com/photo-1606925797300-0b35e9d1794e",
