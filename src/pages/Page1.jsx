@@ -26,6 +26,22 @@ export default function Page1() {
             Add your content here. You can customize this page as needed.
           </p>
         </div>
+        <div className="mt-6 bg-blue-50 rounded-lg shadow-md p-6">
+          <h3 className="text-xl font-semibold text-blue-800 mb-2">
+            Additional Info
+          </h3>
+          <p className="text-gray-600">
+            This section contains extra information.
+          </p>
+        </div>
+        <div className="mt-6 grid grid-cols-2 gap-4">
+          <div className="bg-green-100 p-4 rounded">
+            <p className="font-medium">Feature 1</p>
+          </div>
+          <div className="bg-yellow-100 p-4 rounded">
+            <p className="font-medium">Feature 2</p>
+          </div>
+        </div>
       </div>
     </div>
   );
