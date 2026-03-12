@@ -3,7 +3,19 @@ export default function Page1() {
     <div className="min-h-screen bg-gray-50 p-8">
       <div className="max-w-4xl mx-auto">
         <h1 className="text-4xl font-bold text-gray-800 mb-4">
-          Welcome to Page 456
+          Welcome to Page 123
+        </h1>
+        <h1 className="text-4xl font-bold text-gray-800 mb-4">
+          Welcome to Page 123
+        </h1>
+        <h1 className="text-4xl font-bold text-gray-800 mb-4">
+          Welcome to Page 123
+        </h1>
+        <h1 className="text-4xl font-bold text-gray-800 mb-4">
+          Welcome to Page 123
+        </h1>
+        <h1 className="text-4xl font-bold text-gray-800 mb-4">
+          Welcome to Page 123
         </h1>
         <p className="text-lg text-gray-600 mb-6">
           This is a simple page component.
