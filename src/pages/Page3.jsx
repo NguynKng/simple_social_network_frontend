@@ -1,36 +1,37 @@
 export default function Page2() {
   const images = [
-    {
-      id: 1,
-      url: "https://images.unsplash.com/photo-1579952363873-27f3bade9f55",
-      title: "Cristiano Ronaldo",
-      description: "Siêu sao bóng đá huyền thoại",
-    },
-    {
-      id: 2,
-      url: "https://images.unsplash.com/photo-1560272564-c83b66b1ad12",
-      title: "Lionel Messi",
-      description: "Phù thủy với trái bóng",
-    },
-    {
-      id: 3,
-      url: "https://images.unsplash.com/photo-1522778119026-d647f0596c20",
-      title: "Neymar Jr.",
-      description: "Ngôi sao Brazil tài năng",
-    },
-    {
-      id: 4,
-      url: "https://images.unsplash.com/photo-1606925797300-0b35e9d1794e",
-      title: "Kylian Mbappé",
-      description: "Tốc độ và kỹ thuật tuyệt vời",
-    },
-    {
-      id: 5,
-      url: "https://images.unsplash.com/photo-1574629810360-7efbbe195018",
-      title: "Erling Haaland",
-      description: "Sát thủ vòng cấm địa",
-    },
-  ];
+  {
+    id: 1,
+    url: "https://images.unsplash.com/photo-1536440136628-849c177e76a1",
+    title: "Tom Cruise",
+    description: "Ngôi sao"
+  },
+  {
+    id: 2,
+    url: "https://images.unsplash.com/photo-1517841905240-472988babdf9",
+    title: "Scarlett Johansson",
+    description: "Nữ diễn viên"
+  },
+  {
+    id: 3,
+    url: "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce",
+    title: "Robert Downey Jr.",
+    description: "Iron Man"
+  },
+  {
+    id: 4,
+    url: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d",
+    title: "Chris Hemsworth",
+    description: "Thần sấm"
+  },
+  {
+    id: 5,
+    url: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d",
+    title: "Leonardo DiCaprio",
+    description: "Diễn viên"
+  }
+
+];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 p-8">
