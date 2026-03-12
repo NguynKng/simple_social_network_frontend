@@ -2,34 +2,34 @@ export default function Page2() {
   const images = [
     {
       id: 1,
-      url: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4",
-      title: "Mountain Landscape",
-      description: "Beautiful mountain scenery"
+      url: "https://i.pinimg.com/originals/3e/61/bb/3e61bb707c62c337239800e9c9398666.jpg",
+      title: "Jesus Christ",
+      description: "Sacred Heart of Jesus",
     },
     {
       id: 2,
-      url: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e",
-      title: "Beach Paradise",
-      description: "Tropical beach view"
+      url: "https://i.pinimg.com/736x/89/13/16/8913168604ab1ee9a86ce43ef2b8c2e3.jpg",
+      title: "The Good Shepherd",
+      description: "Jesus the shepherd",
     },
     {
       id: 3,
-      url: "https://images.unsplash.com/photo-1511593358241-7eea1f3c84e5",
-      title: "City Lights",
-      description: "Urban night photography"
+      url: "https://www.seekpng.com/png/full/316-3164943_jesus-christ-png-image-jesus-christ-images-png.png",
+      title: "Christ the King",
+      description: "King of Kings",
     },
     {
       id: 4,
-      url: "https://images.unsplash.com/photo-1469474968028-56623f02e42e",
-      title: "Forest Path",
-      description: "Nature trail adventure"
+      url: "https://i.pinimg.com/originals/c5/4e/8d/c54e8d6f5e4e5e5e5e5e5e5e5e5e5e5e5e.jpg",
+      title: "Divine Mercy",
+      description: "Jesus I trust in you",
     },
     {
       id: 5,
-      url: "https://images.unsplash.com/photo-1501785888041-af3ef285b470",
-      title: "Desert Sunset",
-      description: "Golden hour in the desert"
-    }
+      url: "https://cdn.pixabay.com/photo/2016/11/29/02/05/jesus-1867098_960_720.jpg",
+      title: "Risen Christ",
+      description: "Resurrection glory",
+    },
   ];
 
   return (
@@ -51,7 +51,7 @@ export default function Page2() {
             <div
               key={image.id}
               className={`group relative overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 ${
-                index === 4 ? 'md:col-span-2 lg:col-span-1' : ''
+                index === 4 ? "md:col-span-2 lg:col-span-1" : ""
               }`}
             >
               <img
@@ -75,9 +75,9 @@ export default function Page2() {
             Về Bộ Sưu Tập
           </h2>
           <p className="text-gray-600 text-lg leading-relaxed">
-            Đây là một trang gallery hiển thị 5 hình ảnh đẹp với hiệu ứng hover động. 
-            Di chuột qua mỗi hình để xem chi tiết thông tin. Bạn có thể thay thế các 
-            URL hình ảnh bằng hình ảnh của riêng bạn.
+            Đây là một trang gallery hiển thị 5 hình ảnh đẹp với hiệu ứng hover
+            động. Di chuột qua mỗi hình để xem chi tiết thông tin. Bạn có thể
+            thay thế các URL hình ảnh bằng hình ảnh của riêng bạn.
           </p>
         </div>
       </div>
