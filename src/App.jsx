@@ -8,6 +8,7 @@ import MainLayout from "./components/MainLayout";
 import { Suspense } from "react";
 import SpinnerLoading from "./components/SpinnerLoading";
 import PageKt from "./pages/PageKt";
+import Page1 from "./pages/Page1";
 
 const LazyPage = ({ Element, Layout = MainLayout }) => (
   <Suspense fallback={<SpinnerLoading />}>
@@ -60,6 +61,12 @@ function App() {
           path="/pagekt"
           element={
             <PageKt />
+          }
+        />
+        <Route
+          path="/page1"
+          element={
+            <Page1 />
           }
         />
         <Route
