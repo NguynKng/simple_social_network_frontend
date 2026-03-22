@@ -7,10 +7,6 @@ import { useEffect } from "react";
 import MainLayout from "./components/MainLayout";
 import { Suspense } from "react";
 import SpinnerLoading from "./components/SpinnerLoading";
-import PageKt from "./pages/PageKt";
-import Page1 from "./pages/Page1";
-import Page2 from "./pages/Page2";
-import Page3 from "./pages/Page3";
 
 const LazyPage = ({ Element, Layout = MainLayout }) => (
   <Suspense fallback={<SpinnerLoading />}>
@@ -57,30 +53,6 @@ function App() {
             <AuthRoute>
               <LazyComponent Component={Pages.AuthContainer} />
             </AuthRoute>
-          }
-        />
-        <Route
-          path="/pagekt"
-          element={
-            <PageKt />
-          }
-        />
-        <Route
-          path="/page1"
-          element={
-            <Page1 />
-          }
-        />
-        <Route
-          path="/page2"
-          element={
-            <Page2 />
-          }
-        />
-        <Route
-          path="/page3"
-          element={
-            <Page3 />
           }
         />
         <Route
