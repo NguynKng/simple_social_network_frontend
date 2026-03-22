@@ -40,6 +40,14 @@ function App() {
     <>
       <Routes>
         <Route
+          path="/*"
+          element={
+            <ProtectedRoute>
+              <LazyPage Element={Pages.NotFoundPage} />
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="/"
           element={
             <ProtectedRoute>
@@ -69,14 +77,6 @@ function App() {
             <AuthRoute>
               <LazyComponent Component={Pages.VerifyEmailPage} />
             </AuthRoute>
-          }
-        />
-        <Route
-          path="*"
-          element={
-            <ProtectedRoute>
-              <LazyPage Component={Pages.NotFoundPage} />
-            </ProtectedRoute>
           }
         />
       </Routes>
