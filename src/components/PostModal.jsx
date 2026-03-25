@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect, useMemo } from "react";
 import { toast } from "react-hot-toast";
-import { postApi } from "../services/postApi.js";
 import { getBackendImgURL } from "../utils/helper.js";
 import useAuthStore from "../store/authStore.js";
 import debounce from "lodash.debounce";
@@ -9,7 +8,7 @@ import EmojiPicker from "emoji-picker-react";
 
 function PostModal({
   onClose,
-  onPostCreated,
+  onCreatePost,
   placeholder,
 }) {
   const { user, theme } = useAuthStore();
@@ -29,7 +28,7 @@ function PostModal({
   const [taggedUsers, setTaggedUsers] = useState([]);
   const [showTagModal, setShowTagModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [debouncedQuery, setDebouncedQuery] = useState("");
+  const [, setDebouncedQuery] = useState("");
   const searchInputRef = useRef(null);
 
   // ✅ Debounce search query
@@ -77,6 +76,11 @@ function PostModal({
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (!onCreatePost) {
+      toast.error("Create post handler is missing.");
+      return;
+    }
+
     if (!content.trim() && images.length === 0 && videos.length === 0) {
       toast.error("Please add text, image, or video before posting.");
       return;
@@ -104,7 +108,7 @@ function PostModal({
     });
 
     try {
-      const response = await postApi.createPost({
+      const response = await onCreatePost({
         content,
         taggedUsers: taggedUsers.map((taggedUser) => taggedUser._id),
         mediaOrder: mappedMediaOrder,
@@ -117,10 +121,6 @@ function PostModal({
       } else {
         toast.error(response.message);
         return;
-      }
-
-      if (onPostCreated) {
-        onPostCreated(response.data);
       }
 
       setContent("");
