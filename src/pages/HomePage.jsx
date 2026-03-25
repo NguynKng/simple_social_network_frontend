@@ -5,15 +5,7 @@ import PostCard from "../components/PostCard";
 import { useGetFeed } from "../hooks/usePost";
 
 function HomePage() {
-  const { feed, setFeed, loading } = useGetFeed();
-
-  const handleAddPost = (newPost) => {
-    setFeed((prev) => [newPost, ...prev]);
-  };
-
-  const handleRemovePost = (postId) => {
-    setFeed((prev) => prev.filter((post) => post._id !== postId));
-  };
+  const { feed, loading, createPost, deletePost } = useGetFeed();
 
   return (
     <div className="min-h-screen">
@@ -27,7 +19,7 @@ function HomePage() {
         {/* CENTER: MAIN FEED */}
         <main className="w-full max-w-160 flex-1 space-y-4">
           <CreatePost
-            onPostCreated={handleAddPost}
+            onCreatePost={createPost}
           />
 
           {/* Loading State - Chỉ khi load lần đầu */}
@@ -43,7 +35,7 @@ function HomePage() {
                   <PostCard
                     key={post._id}
                     post={post}
-                    onDeletePost={handleRemovePost}
+                    onDeletePost={deletePost}
                   />
                 ))}
               </div>

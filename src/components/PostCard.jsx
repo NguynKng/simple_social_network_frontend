@@ -69,17 +69,14 @@ const PostCard = memo(({ post, onDeletePost, showComment = false }) => {
   const isReacted = useMemo(() => !!myReaction, [myReaction]);
 
   const handleDeletePost = async () => {
-    if (!user) return;
+    if (!user || !onDeletePost) return;
 
     try {
-      const response = await postApi.deletePost(post._id);
+      const response = await onDeletePost(post._id);
       if (response.success) {
-        if (onDeletePost) {
-          onDeletePost(post._id);
-        }
         toast.success("Post deleted successfully");
       } else {
-        toast.error("Failed to delete post");
+        toast.error(response.message || "Failed to delete post");
       }
     } catch (error) {
       console.error("❌ Failed to delete post:", error);

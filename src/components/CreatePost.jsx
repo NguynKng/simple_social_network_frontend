@@ -4,7 +4,7 @@ import useAuthStore from "../store/authStore.js";
 import PostModal from "./PostModal";
 import { getBackendImgURL } from "../utils/helper.js";
 
-function CreatePost({ onPostCreated }) {
+function CreatePost({ onCreatePost }) {
   const { user } = useAuthStore();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const displayName = user?.fullName || "User";
@@ -54,7 +54,7 @@ function CreatePost({ onPostCreated }) {
       {/* Post creation modal */}
       {isModalOpen && (
         <PostModal
-          onPostCreated={onPostCreated}
+          onCreatePost={onCreatePost}
           onClose={() => setIsModalOpen(false)}
           placeholder={placeholderText()}
         />

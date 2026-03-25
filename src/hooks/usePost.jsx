@@ -37,10 +37,57 @@ export const useGetFeed = () => {
     loadFeed();
   }, [loadFeed]);
 
+  const createPost = useCallback(async (payload) => {
+    try {
+      const response = await postApi.createPost(payload);
+
+      if (response.success) {
+        const createdPost = response.data;
+        if (createdPost) {
+          setFeed((prev) => [createdPost, ...prev]);
+        }
+      } else {
+        setError(response.message);
+      }
+
+      return response;
+    } catch (err) {
+      const errorMessage = err.response?.data?.message || err.message;
+      setError(errorMessage);
+      return {
+        success: false,
+        message: errorMessage,
+      };
+    }
+  }, []);
+
+  const deletePost = useCallback(async (postId) => {
+    try {
+      const response = await postApi.deletePost(postId);
+
+      if (response.success) {
+        setFeed((prev) => prev.filter((post) => post._id !== postId));
+      } else {
+        setError(response.message);
+      }
+
+      return response;
+    } catch (err) {
+      const errorMessage = err.response?.data?.message || err.message;
+      setError(errorMessage);
+      return {
+        success: false,
+        message: errorMessage,
+      };
+    }
+  }, []);
+
   return {
     feed,
     setFeed,
     loading,
     error,
+    createPost,
+    deletePost,
   };
 };
