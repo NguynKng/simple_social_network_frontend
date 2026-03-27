@@ -79,6 +79,22 @@ function App() {
             </AuthRoute>
           }
         />
+        <Route
+          path="*"
+          element={
+            <ProtectedRoute>
+              <LazyPage Component={Pages.NotFoundPage} />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/profile/:slug"
+          element={
+            <ProtectedRoute>
+              <LazyPage Element={Pages.UserProfilePage} />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
       <Toaster
         position="top-right"
