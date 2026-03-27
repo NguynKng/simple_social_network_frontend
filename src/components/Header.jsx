@@ -17,13 +17,19 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import useAuthStore from "../store/authStore";
+import DropdownUser from "./DropDownUser";
+import { useGetProfileByName } from "../hooks/useProfile";
 import debounce from "lodash.debounce";
-import SpinnerLoading from "./SpinnerLoading";
 import { getBackendImgURL } from "../utils/helper";
+import SpinnerLoading from "./SpinnerLoading";
+
 
 function Header({ onToggleChat }) {
   const [query, setQuery] = useState("");
   const isSearchingUser = query.length > 0;
+  const { listUser, loading } = useGetProfileByName(query, {
+    enabled: isSearchingUser,
+  });
   const [dropdown, setDropdown] = useState({
     user: false,
     chat: false,
@@ -43,8 +49,6 @@ function Header({ onToggleChat }) {
       user: type === "user" ? !prev.user : false,
       chat: type === "chat" ? !prev.chat : false,
       notification: type === "notification" ? !prev.notification : false,
-      menu: type === "menu" ? !prev.menu : false,
-      cart: type === "cart" ? !prev.cart : false,
     }));
   };
 
@@ -83,7 +87,33 @@ function Header({ onToggleChat }) {
             />
             {query.length > 0 && (
               <div className="absolute top-full mt-2 left-0 right-0 max-h-96 overflow-y-auto shadow-xl bg-white dark:bg-[#1b1f2b] border border-gray-200 dark:border-gray-700 rounded-lg z-50 p-2 custom-scroll">
-                
+                {loading ? (
+                  <div className="flex justify-center py-4">
+                    <SpinnerLoading />
+                  </div>
+                ) : listUser.length === 0 ? (
+                  <div className="text-center text-gray-500 dark:text-gray-400 py-4">
+                    No users found
+                  </div>
+                ) : (
+                  listUser.map((searchUser) => (
+                    <Link
+                      to={`/profile/${searchUser.slug}`}
+                      key={searchUser._id}
+                      onClick={() => setQuery("")}
+                      className="flex items-center gap-3 p-3 hover:bg-gray-100 dark:hover:bg-[#2a3142] rounded-lg transition-colors"
+                    >
+                      <img
+                        src={getBackendImgURL(searchUser.avatar)}
+                        alt={searchUser.fullName}
+                        className="size-10 object-cover rounded-full"
+                      />
+                      <span className="text-sm font-medium text-gray-900 dark:text-white">
+                        {searchUser.fullName}
+                      </span>
+                    </Link>
+                  ))
+                )}
               </div>
             )}
           </div>
@@ -131,12 +161,10 @@ function Header({ onToggleChat }) {
             onClick={() => toggleDropdown("notification")}
           >
             <Bell className="size-5 text-gray-600 dark:text-gray-300" />
-            
             <div className="absolute top-full mt-2 left-1/2 -translate-x-1/2 px-2 py-1 bg-gray-900 text-white text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
               Notifications
             </div>
           </div>
-
 
           {/* User Avatar */}
           <div className="relative">
@@ -156,6 +184,7 @@ function Header({ onToggleChat }) {
                 Account
               </div>
             </div>
+                {dropdown.user && <DropdownUser onClose={() => toggleDropdown("user")} />}
           </div>
         </div>
       </div>
@@ -185,7 +214,36 @@ function Header({ onToggleChat }) {
           </div>
           {query.length > 0 && (
             <div className="mt-2 max-h-60 overflow-y-auto bg-white dark:bg-[#1b1f2b] rounded-lg p-2">
-              
+              {loading ? (
+                <div className="flex justify-center py-4">
+                  <SpinnerLoading />
+                </div>
+              ) : listUser.length === 0 ? (
+                <div className="text-center text-gray-500 dark:text-gray-400 py-4">
+                  No users found
+                </div>
+              ) : (
+                listUser.map((searchUser) => (
+                  <Link
+                    to={`/profile/${searchUser.slug}`}
+                    key={searchUser._id}
+                    onClick={() => {
+                      setQuery("");
+                      setShowSearch(false);
+                    }}
+                    className="flex items-center gap-3 p-3 hover:bg-gray-100 dark:hover:bg-[#2a3142] rounded-lg transition-colors"
+                  >
+                    <img
+                      src={getBackendImgURL(searchUser.avatar)}
+                      alt={searchUser.fullName}
+                      className="size-10 object-cover rounded-full"
+                    />
+                    <span className="text-sm font-medium text-gray-900 dark:text-white">
+                      {searchUser.fullName}
+                    </span>
+                  </Link>
+                ))
+              )}
             </div>
           )}
         </div>

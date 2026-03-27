@@ -1,136 +1,510 @@
-import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { profileApi } from "../services/profileApi";
+import { useState, useRef, useEffect, useMemo } from "react";
+import {
+  Check,
+  Pencil,
+  UserCheck,
+  UserPlus,
+  UserX,
+} from "lucide-react";
+import { Link, useLocation, useParams, Routes, Route } from "react-router-dom";
+import useAuthStore from "../store/authStore";
+import { userApi } from "../services/userApi";
 import { toast } from "react-hot-toast";
-import { FaCamera, FaSearchPlus, FaUserEdit } from "react-icons/fa";
+import { useGetProfileBySlug } from "../hooks/useProfile";
+import SpinnerLoading from "../components/SpinnerLoading";
+import WarningDeleteFriend from "../components/WarningDeleteFriend";
+import { getBackendImgURL } from "../utils/helper";
 
-const UserProfilePage = () => {
+import PostTab from "../components/UserProfile/PostTab";
+function UserProfilePage({ onToggleChat }) {
+  const [isOpenFriendsDropdown, setIsOpenFriendsDropdown] = useState(false);
   const { slug } = useParams();
-  const navigate = useNavigate();
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [isUploading, setIsUploading] = useState({
+    avatar: false,
+    coverPhoto: false,
+  });
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [newFullName, setNewFullName] = useState("");
+  const [isWarningDeleteFriend, setIsWarningDeleteFriend] = useState(false);
+  const { user, updateUser, theme } = useAuthStore();
+  const avatarInputRef = useRef(null);
+  const { profile } = useGetProfileBySlug(slug);
+  const userId = useMemo(() => profile?._id ?? null, [profile]);
+  const coverPhotoInputRef = useRef(null);
+  const location = useLocation();
+  const clean = useMemo(() => (p) => p.replace(/\/+$/, ""), []);
+
+  const isCurrentTab = useMemo(
+    () => (tabPath) =>
+      clean(location.pathname) ===
+      clean(`/profile/${slug}${tabPath ? `/${tabPath.toLowerCase()}` : ""}`),
+    [slug, clean, location.pathname]
+  );
+
+  const isMyProfile = useMemo(() => userId === user?._id, [userId, user?._id]);
+
+  const [displayedUser, setDisplayedUser] = useState(profile ?? null);
 
   useEffect(() => {
-    const fetchUserProfile = async () => {
-      try {
-        setLoading(true);
-        const data = await profileApi.getUserBySlug(slug);
-        if (data.success && data.data) {
-          setUser(data.data);
-        } else {
-          toast.error("User not found");
-          navigate("/");
-        }
-      } catch (error) {
-        toast.error(error.message || "Error fetching profile");
-        navigate("/");
-      } finally {
-        setLoading(false);
+    if (profile) {
+      setDisplayedUser(profile);
+    }
+  }, [profile]);
+
+  const [isFriend, setIsFriend] = useState(false);
+  const [hasSentFriendRequest, setHasSentFriendRequest] = useState(false);
+  const [isReceivingFriendRequest, setIsReceivingFriendRequest] =
+    useState(false);
+
+  useEffect(() => {
+    if (!isMyProfile && displayedUser && user) {
+      setIsFriend(user.friends?.includes(displayedUser._id));
+      setHasSentFriendRequest(
+        displayedUser.friendRequests?.some((r) => r._id === user._id)
+      );
+      setIsReceivingFriendRequest(
+        user.friendRequests?.includes(displayedUser._id)
+      );
+    }
+  }, [displayedUser, user, isMyProfile]);
+
+  const tabs = useMemo(
+    () => [
+      { name: "Posts", path: "" },
+    ],
+    []
+  );
+
+  if (!displayedUser) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <SpinnerLoading />
+      </div>
+    );
+  }
+
+  const handleToggleChat = (targetUserId) => {
+    if (!onToggleChat) return;
+    onToggleChat(targetUserId);
+  };
+
+  const handleAvatarUpload = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    try {
+      setIsUploading((prev) => ({ ...prev, avatar: true }));
+      const response = await userApi.uploadAvatar(file, userId);
+      const newAvatar = response?.data?.avatar || response?.data;
+      updateUser({ avatar: newAvatar });
+      setDisplayedUser((prev) => ({ ...prev, avatar: newAvatar }));
+      toast.success("Avatar updated successfully");
+    } catch (error) {
+      console.error("Avatar upload error:", error);
+    } finally {
+      setIsUploading((prev) => ({ ...prev, avatar: false }));
+    }
+  };
+
+  const handleCoverPhotoUpload = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    try {
+      setIsUploading((prev) => ({ ...prev, coverPhoto: true }));
+      const response = await userApi.uploadCoverPhoto(file, userId);
+      const newCoverPhoto = response?.data?.coverPhoto || response?.data;
+      updateUser({ coverPhoto: newCoverPhoto });
+      setDisplayedUser((prev) => ({ ...prev, coverPhoto: newCoverPhoto }));
+      toast.success("Cover photo updated successfully");
+    } catch (error) {
+      console.error("Cover photo upload error:", error);
+    } finally {
+      setIsUploading((prev) => ({ ...prev, coverPhoto: false }));
+    }
+  };
+
+  const handleDeleteFriend = async () => {
+    try {
+      const response = await userApi.removeFriend(userId);
+      if (!response.success) {
+        toast.error("Failed to delete friend.");
+        return;
       }
-    };
-    if (slug) fetchUserProfile();
-  }, [slug, navigate]);
+      setIsWarningDeleteFriend(false);
+      updateUser({
+        friends: response?.data?.friends || [],
+      });
+      setIsFriend(false);
+      toast.success("Friend deleted successfully!");
+    } catch (error) {
+      console.error("Error deleting friend:", error);
+      toast.error("Failed to delete friend.");
+    }
+  };
 
-  if (loading) return <div className="flex justify-center mt-20 font-medium italic text-gray-400">Đang tải hồ sơ...</div>;
-  if (!user) return null;
+  const handleAddFriendRequest = async () => {
+    try {
+      const response = await userApi.sendFriendRequest(userId);
+      setHasSentFriendRequest(true);
+      toast.success(response.message);
+    } catch (error) {
+      console.error("Error sending friend request:", error);
+      toast.error("Cannot send friend request.");
+    }
+  };
 
-  const avatarUrl = user.avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.fullName || "User")}&background=EAB308&color=black&size=256`;
+  const handleRemoveFriendRequest = async () => {
+    try {
+      await userApi.cancelFriendRequest(userId);
+      setHasSentFriendRequest(false);
+      toast.success("Friend request cancelled successfully");
+    } catch (error) {
+      console.error("Error cancel friend request:", error);
+      toast.error("Cannot cancel friend request");
+    }
+  };
+
+  const handleDeclineFriendRequest = async () => {
+    try {
+      const response = await userApi.declineFriendRequest(userId);
+      if (!response.success) {
+        toast.error("Failed to decline friend request.");
+        return;
+      }
+      updateUser({ friendRequests: response?.data?.friendRequests || [] });
+      setIsReceivingFriendRequest(false);
+      toast.success("Friend request declined successfully!");
+    } catch (error) {
+      console.error("Error declining friend request:", error);
+      toast.error("Failed to decline friend request.");
+    }
+  };
+
+  const handleAcceptFriendRequest = async () => {
+    try {
+      const response = await userApi.acceptFriendRequest(userId);
+      updateUser({
+        friends: response?.data?.friends || [],
+        friendRequests: response?.data?.friendRequests || [],
+      });
+      console.log("Updated user data after accepting friend request:", response
+      );
+      setIsFriend(true);
+      setIsReceivingFriendRequest(false);
+      toast.success("Friend request accepted successfully");
+    } catch (error) {
+      console.error("Error accepting friend request:", error);
+      toast.error("Cannot accept friend request");
+    }
+  };
+
+  const handleSaveFullName = async () => {
+    if (!newFullName.trim()) {
+      toast.error("Name cannot be empty");
+      return;
+    }
+    try {
+      const response = await userApi.renameUserProfile(newFullName.trim());
+      const updatedFullName = response?.data?.fullName || response?.data;
+      updateUser({ fullName: updatedFullName });
+      setDisplayedUser((prev) => ({ ...prev, fullName: updatedFullName }));
+      setIsEditingName(false);
+      toast.success("Name updated successfully");
+    } catch (error) {
+      console.error("Error updating name:", error);
+      toast.error("Failed to update name");
+    }
+  };
 
   return (
-    /* Dùng flex để chia không gian. 
-       ml-[75px] là dành cho Sidebar nhỏ, lg:ml-[280px] dành cho Sidebar lớn. 
-    */
-    <div className="min-h-screen bg-white ml-[75px] lg:ml-[280px] transition-all duration-300 flex flex-col">
-      
-      {/* 1. COVER SECTION */}
-      <div className="relative w-full h-56 md:h-72 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-b-[40px] shadow-lg flex-shrink-0">
-        <button className="absolute bottom-6 right-6 bg-black/20 hover:bg-black/40 backdrop-blur-md text-white px-4 py-2 rounded-full text-xs font-medium flex items-center gap-2 transition-all border border-white/20 z-10">
-          <FaCamera /> Chỉnh sửa ảnh bìa
-        </button>
-
-        <div className="absolute -bottom-20 left-1/2 -translate-x-1/2 z-20">
-          <div className="relative group w-36 h-36 md:w-44 md:h-44 rounded-full border-[8px] border-white shadow-2xl overflow-hidden bg-white">
-            <img src={avatarUrl} alt="avatar" className="w-full h-full object-cover" />
-            
-            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col cursor-pointer">
-              <div className="flex-[1.5] flex items-center justify-center border-b border-white/10 hover:bg-white/10 transition-colors">
-                <FaSearchPlus className="text-white text-3xl" />
-              </div>
-              <div className="flex-1 flex items-center justify-center hover:bg-white/10 transition-colors">
-                <span className="text-white text-[10px] font-bold tracking-widest uppercase">Chỉnh sửa</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* 3. CONTENT AREA: Chứa Name và Info Card */}
-      <div className="flex-1 flex flex-col items-center px-6">
-        
-        {/* KHOẢNG ĐỆM: Đẩy tên xuống dưới Avatar (Avatar cao 176px, lấn xuống 80px) */}
-        <div className="h-24 w-full"></div> 
-
-        {/* FULLNAME - Nằm tách biệt, không bị che */}
-        <div className="text-center mb-8">
-          <h1 className="text-3xl md:text-4xl font-black text-gray-900 tracking-tight">
-            {user.fullName}
-          </h1>
-          <p className="text-gray-400 font-semibold my-2 text-sm">@{user.slug}</p>
-          
-          <div className="flex gap-3 justify-center mt-6 text-sm" style={{marginTop: "12px"}}>
-            <button className="bg-blue-600 hover:bg-blue-700 text-white px-10 py-3 rounded-2xl font-bold shadow-lg shadow-blue-200 transition-all active:scale-95">
-              Theo dõi
-            </button>
-            <button className="bg-blue-600 hover:bg-blue-700 text-white px-10 py-3 rounded-2xl font-bold shadow-lg shadow-blue-200 transition-all active:scale-95">
-              Nhắn tin
-            </button>
-            <button className="bg-gray-100 hover:bg-gray-200 text-gray-600 p-4 rounded-2xl transition-all">
-              <FaUserEdit size={18} />
-            </button>
-          </div>
-        </div>
-
-        {/* 4. INFO CARD - Đã xử lý không gian và thẩm mỹ */}
-        <div className="w-full max-w-2xl mb-20 space-y-8 " style={{padding: "30px"}}>
-          
-          {/* Stats Row */}
-          <div className="grid grid-cols-2 gap-4">
-            <div className="bg-slate-50 p-6 border border-slate-100 flex flex-col items-center shadow-sm">
-              <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-1">Bài viết</span>
-              <span className="text-2xl font-black text-slate-800">12</span>
-            </div>
-            <div className="bg-slate-50 p-6 border border-slate-100 flex flex-col items-center shadow-sm">
-              <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-1">Tham gia</span>
-              <span className="text-2xl font-black text-slate-800">
-                {new Date(user.createdAt).getFullYear()}
-              </span>
-            </div>
-          </div>
-
-          {/* Account Details Card */}
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-xl shadow-gray-200/20 overflow-hidden" style={{marginTop: "20px"}}>
-            <div className="px-8 py-8 bg-gray-50/50 border-b border-gray-100" style={{marginLeft: "20px", padding: "10px"}}>
-              <h3 className="text-xs font-black text-gray-400 uppercase tracking-[3px]">Chi tiết tài khoản</h3>
-            </div>
-            
-            <div className="p-4 space-y-1" >
-               <div className="flex items-center justify-between p-4 rounded-2xl hover:bg-gray-50 transition-colors" style={{marginTop: "10px",marginBottom: "10px", marginLeft: "20px", marginRight: "20px"}}>
-                  <span className="text-sm text-gray-400 font-semibold">Mã định danh</span>
-                  <span className="text-sm text-gray-900 font-bold bg-gray-100 px-3 py-1 rounded-lg">@{user.slug}</span>
-               </div>
-               <div className="flex items-center justify-between p-4 rounded-2xl hover:bg-gray-50 transition-colors" style={{marginTop: "10px", marginBottom: "10px", marginLeft: "20px", marginRight: "20px"}}>
-                  <span className="text-sm text-gray-400 font-semibold">Ngày tham gia</span>
-                  <span className="text-sm text-gray-900 font-bold">
-                    {new Date(user.createdAt).toLocaleDateString('vi-VN')}
+    <>
+      <div className="lg:px-[15%] bg-gray-100 dark:bg-[#181826]">
+        <div className="relative w-full">
+          <div className="relative w-full lg:h-96 md:h-88 sm:h-80 h-72 rounded-b-md">
+            <img
+              src={getBackendImgURL(displayedUser?.coverPhoto)}
+              className="size-full lg:rounded-b-md object-cover"
+              alt="Cover photo"
+              loading="lazy"
+            />
+            {isMyProfile && (
+              <>
+                <input
+                  type="file"
+                  ref={coverPhotoInputRef}
+                  onChange={handleCoverPhotoUpload}
+                  accept="image/*"
+                  className="hidden"
+                />
+                <div
+                  className="absolute bottom-4 right-4 z-31 flex items-center gap-2 bg-white hover:bg-gray-300 cursor-pointer rounded-md py-2 px-4 text-black font-medium"
+                  onClick={() => coverPhotoInputRef.current.click()}
+                >
+                  <img src="/camera.png" className="size-4 object-cover" />
+                  <span className="lg:inline hidden">
+                    {isUploading.coverPhoto
+                      ? "Uploading..."
+                      : "Change cover photo"}
                   </span>
-               </div>
+                </div>
+                <div className="absolute bottom-0 w-full bg-linear-to-t from-black/50 to-transparent h-[30%] rounded-md"></div>
+              </>
+            )}
+            <div className="absolute bottom-0 lg:translate-y-1/2 translate-y-1/5 lg:left-10 left-4 bg-gray-200 dark:bg-[#23233b] hover:bg-gray-300 dark:hover:bg-[#23233b] rounded-full z-10 w-46 h-46 flex border-4 border-white items-center justify-center">
+              <img
+                src={getBackendImgURL(displayedUser?.avatar)}
+                className="size-full rounded-full object-cover cursor-pointer hover:opacity-70"
+                alt="Avatar"
+              />
+              <input
+                type="file"
+                ref={avatarInputRef}
+                onChange={handleAvatarUpload}
+                accept="image/*"
+                className="hidden"
+              />
+              {isMyProfile && (
+                <div
+                  className="absolute bottom-4 right-0 p-2 size-9 rounded-full bg-gray-200 hover:bg-gray-300 cursor-pointer"
+                  onClick={() => avatarInputRef.current.click()}
+                >
+                  {isUploading.avatar ? (
+                    <div className="size-full flex items-center justify-center">
+                      <div className="w-4 h-4 border-2 border-gray-600 border-t-transparent rounded-full animate-spin"></div>
+                    </div>
+                  ) : (
+                    <img src="/camera.png" className="size-full object-cover" />
+                  )}
+                </div>
+              )}
             </div>
           </div>
-
+          <div className="w-full">
+            <div className="relative w-full">
+              <div className="lg:px-8 px-4">
+                <div className="flex lg:flex-row flex-col lg:justify-between justify-center lg:items-end items-start border-b-2 border-gray-200 dark:border-[#2b2b3d] lg:pb-4 pb-1 lg:pl-52 lg:pt-4 pt-10">
+                  <div className="flex lg:flex-row flex-col gap-2 justify-center items-center self-start">
+                    <div className="flex flex-col justify-center items-start self-end gap-2">
+                      <div className="flex flex-wrap gap-2 items-center">
+                        {isEditingName && isMyProfile ? (
+                          <div className="flex flex-wrap items-center gap-2">
+                            <input
+                              type="text"
+                              value={newFullName}
+                              onChange={(e) => setNewFullName(e.target.value)}
+                              className="text-2xl font-bold px-2 py-1 border-2 border-blue-500 rounded dark:bg-[#23233b] dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-400 w-full max-w-64"
+                              autoFocus
+                              placeholder="Enter name"
+                            />
+                            <button
+                              onClick={handleSaveFullName}
+                              className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600 cursor-pointer transition-colors"
+                              title="Save"
+                            >
+                              <Check className="size-4" />
+                            </button>
+                            <button
+                              onClick={() => setIsEditingName(false)}
+                              className="p-2 cursor-pointer bg-gray-300 dark:bg-[#2b2b3d] text-gray-700 dark:text-gray-300 rounded hover:bg-gray-400 dark:hover:bg-[#35354f] transition-colors"
+                              title="Cancel"
+                            >
+                              <UserX className="size-4" />
+                            </button>
+                          </div>
+                        ) : (
+                          <>
+                            <h1 className="text-3xl font-bold dark:text-white">
+                              {displayedUser?.fullName || "Loading..."}
+                            </h1>
+                            {isMyProfile && (
+                              <button
+                                onClick={() => {
+                                  setNewFullName(displayedUser?.fullName || "");
+                                  setIsEditingName(true);
+                                }}
+                                className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-[#23233b] cursor-pointer transition-colors"
+                                title="Edit name"
+                              >
+                                <Pencil className="size-4 text-gray-600 dark:text-gray-400" />
+                              </button>
+                            )}
+                            {displayedUser.isVerifiedAccount && (
+                              <div
+                                className="p-2 rounded-full bg-green-500"
+                                title="Verified account"
+                              >
+                                <Check className="text-white size-4" />
+                              </div>
+                            )}
+                          </>
+                        )}
+                      </div>
+                      <p className="text-gray-500 dark:text-gray-400 rounded">{`${
+                        displayedUser.friends.length || 0
+                      } friend${
+                        displayedUser.friends.length !== 1 ? "s" : ""
+                      }`}</p>
+                    </div>
+                  </div>
+                  <div className="flex flex-col justify-end items-end py-4 z-30">
+                    <div className="flex gap-2 items-center">
+                      {isMyProfile ? (
+                        <>
+                          <button className="flex lg:gap-2 gap-1 items-center justify-center bg-gray-200 dark:bg-[#23233b] hover:bg-gray-300 dark:hover:bg-[#23233b] cursor-pointer rounded-md py-2 lg:px-4 px-2 text-black dark:text-white font-medium">
+                            <Pencil className="size-4" />
+                            <span>Edit profile</span>
+                          </button>
+                        </>
+                      ) : isFriend ? (
+                        <>
+                          <button
+                            className="relative flex gap-2 bg-gray-200 dark:bg-[#23233b] text-black dark:text-white rounded-md py-2 px-4 font-medium items-center hover:bg-gray-300 dark:hover:bg-[#23233b] cursor-pointer"
+                            onClick={() =>
+                              setIsOpenFriendsDropdown(!isOpenFriendsDropdown)
+                            }
+                          >
+                            <UserCheck />
+                            <span>Bạn bè</span>
+                            {isOpenFriendsDropdown && (
+                              <div className="absolute right-0 top-full w-72 bg-white dark:bg-[#1e1e2f] rounded-lg shadow-xl z-50 border border-gray-200 dark:border-[#2b2b3d]">
+                                <ul className="p-2">
+                                  <li
+                                    className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 dark:hover:bg-[#23233b] cursor-pointer rounded-md"
+                                    onClick={() =>
+                                      setIsWarningDeleteFriend(true)
+                                    }
+                                  >
+                                    <UserX />
+                                    <span className="font-medium">
+                                      Remove Friend
+                                    </span>
+                                  </li>
+                                </ul>
+                              </div>
+                            )}
+                          </button>
+                          <button
+                            className="flex gap-2 items-center justify-center bg-gray-200 dark:bg-[#23233b] hover:bg-gray-300 dark:hover:bg-[#23233b] cursor-pointer rounded-md py-2 px-4 text-black dark:text-white font-medium"
+                            onClick={() => handleToggleChat(displayedUser._id)}
+                          >
+                            <img
+                              src={
+                                theme === "light"
+                                  ? "/messenger-icon.png"
+                                  : "/messenger-icon-white.png"
+                              }
+                              className="object-cover size-5"
+                            />
+                            <span>Message</span>
+                          </button>
+                        </>
+                      ) : isReceivingFriendRequest ? (
+                        <>
+                          <button
+                            className="flex gap-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md py-2 px-4 font-medium items-center cursor-pointer"
+                            onClick={handleAcceptFriendRequest}
+                          >
+                            <span>Accept Request</span>
+                          </button>
+                          <button
+                            className="flex gap-2 bg-gray-200 dark:bg-[#23233b] hover:bg-gray-300 dark:hover:bg-[#23233b] text-black dark:text-white rounded-md py-2 px-4 font-medium items-center cursor-pointer"
+                            onClick={handleDeclineFriendRequest}
+                          >
+                            <span>Delete Request</span>
+                          </button>
+                          <button
+                            className="flex gap-2 items-center justify-center bg-gray-200 dark:bg-[#23233b] hover:bg-gray-300 dark:hover:bg-[#23233b] cursor-pointer rounded-md py-2 px-4 text-black dark:text-white font-medium"
+                            onClick={() => handleToggleChat(displayedUser._id)}
+                          >
+                            <img
+                              src={
+                                theme === "light"
+                                  ? "/messenger-icon.png"
+                                  : "/messenger-icon-white.png"
+                              }
+                              className="object-cover size-5"
+                            />
+                            <span>Message</span>
+                          </button>
+                        </>
+                      ) : (
+                        <>
+                          <button
+                            className={`flex gap-2 font-medium cursor-pointer ${
+                              hasSentFriendRequest
+                                ? "bg-gray-200 dark:bg-[#23233b] hover:bg-gray-300 dark:hover:bg-[#23233b] text-black dark:text-white"
+                                : "bg-blue-500 hover:bg-blue-600 text-white"
+                            } rounded-md py-2 px-4 items-center justify-center`}
+                            onClick={
+                              hasSentFriendRequest
+                                ? handleRemoveFriendRequest
+                                : handleAddFriendRequest
+                            }
+                          >
+                            <UserPlus />
+                            <span>
+                              {hasSentFriendRequest
+                                ? "Cancel Request"
+                                : "Add Friend"}
+                            </span>
+                          </button>
+                          <button
+                            className="flex gap-2 items-center justify-center bg-gray-200 dark:bg-[#23233b] hover:bg-gray-300 dark:hover:bg-[#23233b] cursor-pointer rounded-md py-2 px-4 text-black dark:text-white font-medium"
+                            onClick={() => handleToggleChat(displayedUser._id)}
+                          >
+                            <img
+                              src={
+                                theme === "light"
+                                  ? "/messenger-icon.png"
+                                  : "/messenger-icon-white.png"
+                              }
+                              className="object-cover size-5"
+                            />
+                            <span>Message</span>
+                          </button>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                </div>
+                <div className="flex justify-between items-center">
+                  <div className="flex flex-wrap py-1">
+                    {tabs.map((tab, index) => (
+                      <Link
+                        to={`/profile/${slug}/${tab.path}`}
+                        key={index}
+                        className={`cursor-pointer border-b-4 font-medium py-1 px-2 lg:py-3 lg:px-4 ${
+                          isCurrentTab(tab.path)
+                            ? "border-blue-500 text-blue-500 bg-transparent"
+                            : "border-transparent text-gray-500 hover:bg-gray-200 rounded-md"
+                        }`}
+                      >
+                        {tab.name}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
+
+      <section className="bg-gray-200 dark:bg-[#181826] lg:px-[17%] px-2 py-4 min-h-screen">
+        <Routes>
+          <Route path="/" element={<PostTab displayedUser={displayedUser} />} />
+        </Routes>
+      </section>
+      {isWarningDeleteFriend && (
+        <WarningDeleteFriend
+          onConfirm={handleDeleteFriend}
+          onCancel={() => setIsWarningDeleteFriend(false)}
+          displayedUser={displayedUser}
+        />
+      )}
+    </>
   );
-};
+}
 
 export default UserProfilePage;

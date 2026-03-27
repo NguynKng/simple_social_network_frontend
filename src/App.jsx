@@ -80,15 +80,7 @@ function App() {
           }
         />
         <Route
-          path="*"
-          element={
-            <ProtectedRoute>
-              <LazyPage Component={Pages.NotFoundPage} />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/profile/:slug"
+          path="/profile/:slug/*"
           element={
             <ProtectedRoute>
               <LazyPage Element={Pages.UserProfilePage} />
