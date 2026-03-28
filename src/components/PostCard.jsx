@@ -62,7 +62,7 @@ const PostCard = memo(({ post, onDeletePost, showComment = false }) => {
     : [];
 
   const myReaction = useMemo(
-    () => reactions.find((reaction) => reaction?.user === user?._id),
+    () => reactions.find((reaction) => reaction?.user.id === user?._id),
     [reactions, user]
   );
 

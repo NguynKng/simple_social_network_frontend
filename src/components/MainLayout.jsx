@@ -8,6 +8,7 @@ import Navbar from "./Navbar";
 import NotificationPopup from "./NotificationPopup";
 import { Sound } from "../utils/sound";
 import useNotificationStore from "../store/notificationStore";
+import ChatBox from "./ChatBox";
 
 function MainLayout({ Element }) {
   const { addNotification } = useNotificationStore();
@@ -25,22 +26,27 @@ function MainLayout({ Element }) {
     },
   });
 
+  const handleGetNewMessage = useCallback(
+    (chat) => {
+      setShowChat(true);
+      setActiveChat(chat.chat);
+    },
+    [setShowChat, setActiveChat],
+  );
+
   const handleGetNotificationsAndPopup = useCallback(
     (notification1) => {
       Sound.play();
       const { notification } = notification1;
       if (notification.type === "friend_request") {
-        const newFriendRequests = [
-          ...user.friendRequests,
-          notification.actor._id,
-        ];
+        const newFriendRequests = [...user.friendRequests, notification.actor];
         updateUser({
           friendRequests: newFriendRequests,
         });
       }
 
       if (notification.type === "accepted_request") {
-        const newFriends = [...user.friends, notification.actor._id];
+        const newFriends = [...user.friends, notification.actor];
         updateUser({
           friends: newFriends,
         });
@@ -81,15 +87,26 @@ function MainLayout({ Element }) {
     });
   };
 
+  const handleToggleChat = (chat) => {
+    setActiveChat(chat);
+    setShowChat(true); // ensure ChatBox shows when a friend is clicked
+  };
+
+  const handleCloseChat = () => {
+    setShowChat(false);
+    setActiveChat(undefined);
+  }; // giữ nguyên qua các route
+
   useEffect(() => {
     if (!socket) return;
-
+    socket.on("getNewMessage", handleGetNewMessage);
     socket.on("new_notification", handleGetNotificationsAndPopup);
 
     return () => {
+      socket.off("getNewMessage", handleGetNewMessage);
       socket.off("new_notification", handleGetNotificationsAndPopup);
     };
-  }, [socket, handleGetNotificationsAndPopup]);
+  }, [socket, handleGetNotificationsAndPopup, handleGetNewMessage]);
 
   return (
     <>
@@ -98,10 +115,11 @@ function MainLayout({ Element }) {
         isCloseSidebar={isCloseSidebar}
         setIsCloseSidebar={setIsCloseSidebar}
       />
-      <Header />
+      <Header onToggleChat={handleToggleChat} />
       <div className="relative mt-[64px] bg-gradient-to-br from-[#f0f4ff] to-[#fff1f7] dark:from-[#1c1f2a] dark:to-[#2a2e3d] min-h-[92vh]">
-        <Element />
+        <Element onToggleChat={handleToggleChat} />
       </div>
+      {showChat && <ChatBox chat={activeChat} onClose={handleCloseChat} />}
       {popup.isPopup && (
         <NotificationPopup content={popup.content} onClose={handleClosePopup} />
       )}
