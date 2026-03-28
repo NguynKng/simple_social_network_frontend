@@ -20,7 +20,8 @@ const PostTab = memo(({ displayedUser }) => {
   const userId = displayedUser?._id;
   const { user } = useAuthStore();
   const isMyProfile = userId === user?._id;
-  const { posts, loading, createOwnerPost, deleteOwnerPost } = useGetOwnerPost(userId);
+  const { posts, loading, createOwnerPost, deleteOwnerPost } =
+    useGetOwnerPost(userId);
   const friends = displayedUser?.friends || [];
   return (
     <>
@@ -40,7 +41,11 @@ const PostTab = memo(({ displayedUser }) => {
                 {displayedUser.bio}
               </p>
             ) : (
-              isMyProfile && <p className="text-gray-500 dark:text-gray-400 text-center text-sm">No bio yet</p>
+              isMyProfile && (
+                <p className="text-gray-500 dark:text-gray-400 text-center text-sm">
+                  No bio yet
+                </p>
+              )
             )}
 
             <hr className="border-gray-200 dark:border-[#2b2b3d]" />
@@ -210,6 +215,7 @@ const PostTab = memo(({ displayedUser }) => {
                       return (
                         <Link
                           key={`${post._id}-${idx}`}
+                          to={`/posts/${post._id}`}
                           className="relative w-full lg:h-32 h-56 overflow-hidden rounded-md cursor-pointer hover:scale-105 transition-transform duration-300 border-2 border-gray-200"
                         >
                           <img
@@ -231,7 +237,10 @@ const PostTab = memo(({ displayedUser }) => {
               <h1 className="text-xl font-bold text-gray-900 dark:text-white">
                 Friends
               </h1>
-              <Link to={`/profile/${displayedUser.slug}/friends`} className="text-blue-500 rounded-md py-2 px-4 cursor-pointer hover:bg-gray-200 dark:hover:bg-[#23233b]">
+              <Link
+                to={`/profile/${displayedUser.slug}/friends`}
+                className="text-blue-500 rounded-md py-2 px-4 cursor-pointer hover:bg-gray-200 dark:hover:bg-[#23233b]"
+              >
                 View All Friends
               </Link>
             </div>
@@ -261,11 +270,7 @@ const PostTab = memo(({ displayedUser }) => {
         </div>
 
         <div className="lg:w-[60%] w-full space-y-4">
-          {isMyProfile && (
-            <CreatePost
-                onCreatePost={createOwnerPost}
-            />
-          )}
+          {isMyProfile && <CreatePost onCreatePost={createOwnerPost} />}
           <div className="py-2 px-4 bg-white dark:bg-[#1e1e2f] rounded-lg">
             <h1 className="text-xl font-bold text-gray-900 dark:text-white">
               Posts
