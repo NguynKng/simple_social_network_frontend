@@ -95,6 +95,14 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/news"
+          element={
+            <ProtectedRoute>
+              <LazyPage Element={Pages.NewsPage} />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
       <Toaster
         position="top-right"
