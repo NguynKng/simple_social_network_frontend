@@ -5,3 +5,4 @@ export { default as HomePage } from "./HomePage";
 export { default as NotFoundPage } from "./NotFoundPage";
 export { default as AuthContainer } from "./AuthContainer";
 export { default as UserProfilePage } from "./UserProfilePage";
+export { default as DetailPostPage } from "./DetailPostPage";

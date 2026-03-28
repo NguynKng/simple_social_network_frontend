@@ -87,6 +87,14 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/posts/:postId"
+          element={
+            <ProtectedRoute>
+              <LazyPage Element={Pages.DetailPostPage} />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
       <Toaster
         position="top-right"
