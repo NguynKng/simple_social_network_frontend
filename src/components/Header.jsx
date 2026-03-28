@@ -19,6 +19,7 @@ import { Link } from "react-router-dom";
 import useAuthStore from "../store/authStore";
 import DropdownUser from "./DropDownUser";
 import DropdownNotification from "./DropdownNotification";
+import DropdownChat from "./DropdownChat";
 import { useGetProfileByName } from "../hooks/useProfile";
 import debounce from "lodash.debounce";
 import { getBackendImgURL } from "../utils/helper";
@@ -191,6 +192,12 @@ function Header({ onToggleChat }) {
                 Account
               </div>
             </div>
+            {dropdown.chat && (
+              <DropdownChat
+                onToggleChat={onToggleChat}
+                onClose={() => toggleDropdown("chat")}
+              />
+            )}
             {dropdown.notification && (
               <DropdownNotification
                 notifications={notifications}

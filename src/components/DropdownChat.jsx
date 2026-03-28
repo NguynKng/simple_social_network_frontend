@@ -1,0 +1,126 @@
+import { useState, useMemo } from "react";
+import { Ellipsis, Expand, Search } from "lucide-react";
+import { useGetChats } from "../hooks/useChat";
+import SpinnerLoading from "./SpinnerLoading";
+import useAuthStore from "../store/authStore";
+import { getBackendImgURL } from "../utils/helper";
+
+function DropdownChat({ onToggleChat, onClose }) {
+  const { messages, loading } = useGetChats();
+  const { onlineUsers, user } = useAuthStore();
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const filteredMessages = useMemo(() => {
+    return messages
+      .filter((chat) => chat.type === "private")
+      .filter((chat) => {
+        const otherUser = chat.participants?.find((p) => p._id !== user._id);
+        return otherUser?.fullName
+          ?.toLowerCase()
+          .includes(searchTerm.toLowerCase());
+      });
+  }, [messages, searchTerm, user._id]);
+
+  function renderChats(list) {
+    if (!list || list.length === 0)
+      return (
+        <p className="text-center text-gray-500 text-sm dark:text-gray-300">
+          No chats found.
+        </p>
+      );
+
+    return list.map((chat) => {
+      const otherUser =
+        chat.type === "private"
+          ? chat.participants.find((p) => p._id !== user._id)
+          : null;
+
+      const isSentByMe = chat.lastMessage?.sender._id === user._id;
+      const displayAvatar = getBackendImgURL(otherUser?.avatar);
+      const displayName = otherUser?.fullName || "Unknown";
+      const onlineIndicator =
+        otherUser && onlineUsers.includes(otherUser._id);
+
+      return (
+        <div
+          key={chat._id}
+          onClick={() => {
+            onToggleChat(chat);
+            onClose();
+          }}
+          className="flex items-center gap-3 hover:bg-gray-100 rounded-xl px-3 py-2 cursor-pointer transition-all duration-200 transform hover:scale-[1.02] hover:shadow-md dark:hover:bg-[rgb(52,52,52)]"
+        >
+          {/* Avatar */}
+          <div className="relative size-10 rounded-full">
+            <img
+              src={displayAvatar}
+              className="size-full rounded-full object-cover"
+            />
+
+            {/* Online indicator */}
+            {onlineIndicator && (
+              <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white" />
+            )}
+          </div>
+
+          {/* Info */}
+          <div className="flex-1">
+            <h2 className="text-sm font-semibold text-gray-800 dark:text-white">
+              {displayName}
+            </h2>
+            <p className="text-xs text-gray-500 truncate dark:text-white">
+              {isSentByMe ? "You: " : ""}
+              {chat.lastMessage?.media.length > 0
+                ? `sent ${chat.lastMessage.media.length} media`
+                : chat.lastMessage?.text || "No messages yet."}
+            </p>
+          </div>
+        </div>
+      );
+    });
+  }
+
+  return (
+    <>
+      <div className="absolute top-[110%] right-0 min-w-96 rounded-xl shadow-2xl bg-white p-4 space-y-5 animate-fade-in transform transition-all duration-300 ease-in-out dark:bg-[rgb(35,35,35)]">
+        {/* Header */}
+        <div className="flex items-center justify-between gap-2">
+          <h1 className="text-2xl font-extrabold bg-linear-to-r from-blue-500 via-purple-500 to-pink-500 bg-clip-text text-transparent drop-shadow-md dark:text-white">
+            Chats
+          </h1>
+          <div className="relative flex items-center gap-2">
+            <div className="bg-transparent hover:bg-gray-200 rounded-full size-8 flex items-center justify-center cursor-pointer transition duration-200 transform hover:scale-110 dark:hover:bg-[rgb(52,52,52)]">
+              <Ellipsis className="size-5 text-gray-500" />
+            </div>
+            <div className="bg-transparent hover:bg-gray-200 rounded-full size-8 flex items-center justify-center cursor-pointer transition duration-200 transform hover:scale-110 dark:hover:bg-[rgb(52,52,52)]">
+              <Expand className="size-5 text-gray-500" />
+            </div>
+          </div>
+        </div>
+
+        {/* Search */}
+        <div className="relative w-full">
+          <Search className="absolute size-5 top-1/2 -translate-y-1/2 left-3 text-gray-500 dark:text-gray-400" />
+          <input
+            type="text"
+            placeholder="Search in messenger"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="text-gray-900 w-full py-2 pl-10 bg-gray-100 rounded-full focus:outline-none dark:bg-[rgb(52,52,53)] text-sm shadow-inner dark:placeholder:text-gray-300 dark:text-gray-300"
+          />
+        </div>
+
+        {/* Chat List */}
+        <div className="space-y-2 h-112 custom-scroll overflow-y-auto pr-1 custom-scrollbar">
+          {loading ? (
+            <SpinnerLoading />
+          ) : (
+            renderChats(filteredMessages)
+          )}
+        </div>
+      </div>
+    </>
+  );
+}
+
+export default DropdownChat;

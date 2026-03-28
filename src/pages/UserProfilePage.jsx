@@ -14,6 +14,7 @@ import { useGetProfileBySlug } from "../hooks/useProfile";
 import SpinnerLoading from "../components/SpinnerLoading";
 import WarningDeleteFriend from "../components/WarningDeleteFriend";
 import { getBackendImgURL } from "../utils/helper";
+import { chatApi } from "../services/chatApi";
 
 import PostTab from "../components/UserProfile/PostTab";
 function UserProfilePage({ onToggleChat }) {
@@ -83,9 +84,9 @@ function UserProfilePage({ onToggleChat }) {
     );
   }
 
-  const handleToggleChat = (targetUserId) => {
-    if (!onToggleChat) return;
-    onToggleChat(targetUserId);
+  const handleToggleChat = async (targetUserId) => {
+    const response = await chatApi.getChatByUserId(targetUserId);
+    onToggleChat(response.data);
   };
 
   const handleAvatarUpload = async (event) => {
