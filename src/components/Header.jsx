@@ -18,13 +18,15 @@ import {
 import { Link } from "react-router-dom";
 import useAuthStore from "../store/authStore";
 import DropdownUser from "./DropDownUser";
+import DropdownNotification from "./DropdownNotification";
 import { useGetProfileByName } from "../hooks/useProfile";
 import debounce from "lodash.debounce";
 import { getBackendImgURL } from "../utils/helper";
 import SpinnerLoading from "./SpinnerLoading";
-
+import { useGetNotification } from "../hooks/useNotification";
 
 function Header({ onToggleChat }) {
+  const { notifications, unreadCount } = useGetNotification();
   const [query, setQuery] = useState("");
   const isSearchingUser = query.length > 0;
   const { listUser, loading } = useGetProfileByName(query, {
@@ -34,8 +36,6 @@ function Header({ onToggleChat }) {
     user: false,
     chat: false,
     notification: false,
-    menu: false,
-    cart: false,
   });
   const [showSearch, setShowSearch] = useState(false);
   const { user, theme, toggleTheme } = useAuthStore();
@@ -161,6 +161,13 @@ function Header({ onToggleChat }) {
             onClick={() => toggleDropdown("notification")}
           >
             <Bell className="size-5 text-gray-600 dark:text-gray-300" />
+            {unreadCount > 0 && (
+              <div className="absolute -top-1 -right-1 bg-red-500 min-w-[18px] h-[18px] flex items-center justify-center rounded-full px-1">
+                <span className="text-white text-xs font-semibold">
+                  {unreadCount > 99 ? "99+" : unreadCount}
+                </span>
+              </div>
+            )}
             <div className="absolute top-full mt-2 left-1/2 -translate-x-1/2 px-2 py-1 bg-gray-900 text-white text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
               Notifications
             </div>
@@ -184,7 +191,15 @@ function Header({ onToggleChat }) {
                 Account
               </div>
             </div>
-                {dropdown.user && <DropdownUser onClose={() => toggleDropdown("user")} />}
+            {dropdown.notification && (
+              <DropdownNotification
+                notifications={notifications}
+                onClose={() => toggleDropdown("notification")}
+              />
+            )}
+            {dropdown.user && (
+              <DropdownUser onClose={() => toggleDropdown("user")} />
+            )}
           </div>
         </div>
       </div>
