@@ -58,12 +58,12 @@ function UserProfilePage({ onToggleChat }) {
 
   useEffect(() => {
     if (!isMyProfile && displayedUser && user) {
-      setIsFriend(user.friends?.includes(displayedUser._id));
+      setIsFriend(user.friends?.some((f) => f._id === displayedUser._id));
       setHasSentFriendRequest(
         displayedUser.friendRequests?.some((r) => r._id === user._id)
       );
       setIsReceivingFriendRequest(
-        user.friendRequests?.includes(displayedUser._id)
+        user.friendRequests?.some((r) => r._id === displayedUser._id)
       );
     }
   }, [displayedUser, user, isMyProfile]);
@@ -158,7 +158,6 @@ function UserProfilePage({ onToggleChat }) {
     try {
       await userApi.cancelFriendRequest(userId);
       setHasSentFriendRequest(false);
-      toast.success("Friend request cancelled successfully");
     } catch (error) {
       console.error("Error cancel friend request:", error);
       toast.error("Cannot cancel friend request");
@@ -174,7 +173,6 @@ function UserProfilePage({ onToggleChat }) {
       }
       updateUser({ friendRequests: response?.data?.friendRequests || [] });
       setIsReceivingFriendRequest(false);
-      toast.success("Friend request declined successfully!");
     } catch (error) {
       console.error("Error declining friend request:", error);
       toast.error("Failed to decline friend request.");
@@ -188,11 +186,8 @@ function UserProfilePage({ onToggleChat }) {
         friends: response?.data?.friends || [],
         friendRequests: response?.data?.friendRequests || [],
       });
-      console.log("Updated user data after accepting friend request:", response
-      );
       setIsFriend(true);
       setIsReceivingFriendRequest(false);
-      toast.success("Friend request accepted successfully");
     } catch (error) {
       console.error("Error accepting friend request:", error);
       toast.error("Cannot accept friend request");
