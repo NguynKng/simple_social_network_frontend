@@ -35,6 +35,7 @@ function Navbar({ isCloseSidebar, setIsCloseSidebar }) {
       text: "Profile",
       link: `/profile/${user.slug}`,
     },
+    { tab: "news", src: Newspaper, text: "News", link: "/news" },
     { tab: "friends", src: Handshake, text: "Friends", link: "/friends" },
   ];
 
